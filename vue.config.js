@@ -5,6 +5,7 @@ module.exports = defineConfig({
   devServer: {
     port: 2977
   },
+  publicPath: process.env.NODE_ENV === 'production' ? '/qianqian_menu/' : '/',  
 
   pluginOptions: {
     vuetify: {
