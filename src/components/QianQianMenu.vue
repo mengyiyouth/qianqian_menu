@@ -14,9 +14,8 @@
             ></v-text-field>
           </v-col>
           <v-col cols="3">
-            <v-btn color="primary" @click="palceAndOrder"
-              >Place and order
-            </v-btn>
+            <v-btn color="primary" @click="palceAndOrder">Order </v-btn>
+            <v-btn color="primary" @click="addNewDish">Add</v-btn>
           </v-col>
         </v-row>
       </template>
@@ -31,10 +30,14 @@
         return-object
         class="adaptive-table"
       >
+        <template v-slot:[`item.picture`]="{ item }">
+          {{ console.log(item) }}
+          <v-img :src="item.picture" width="100" height="100"></v-img>
+        </template>
       </v-data-table>
     </v-card>
 
-    <v-dialog v-model="showDialog" max-width="500px">
+    <v-dialog v-model="showOrderDialog" max-width="500px">
       <v-card>
         <v-card-title>
           <span class="headline">Order Summary</span>
@@ -53,9 +56,47 @@
         <v-date-picker></v-date-picker>
         <v-card-actions>
           <v-spacer></v-spacer>
+
           <v-btn color="blue darken-1" text @click="showDialog = false"
             >Close</v-btn
           >
+          <v-btn
+            color="surface-variant"
+            text="Save"
+            variant="flat"
+            @click="saveNewDish"
+          ></v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="showAddDialog" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">Add New Dish</span>
+        </v-card-title>
+        <v-card-text>
+          <v-form ref="form">
+            <v-text-field
+              v-model="newDish.name"
+              label="Dish Name"
+              required
+            ></v-text-field>
+            <v-file-input
+              v-model="newDish.picture"
+              label="Picture"
+              accept="image/*"
+              @change="onFileChange"
+              required
+            ></v-file-input>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="showAddDialog = false"
+            >Cancel</v-btn
+          >
+          <v-btn color="blue darken-1" text @click="saveNewDish">Add</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -65,8 +106,13 @@
 export default {
   data() {
     return {
-      showDialog: false,
+      showOrderDialog: false,
+      showAddDialog: false,
       selected: [],
+      newDish: {
+        name: "",
+        picture: "",
+      },
       search: "",
       headers: [
         { title: "Name", key: "name", align: "center" },
@@ -76,42 +122,42 @@ export default {
         {
           id: "1",
           name: "酸菜五花肉",
-          picture: "https://img.yzcdn.cn/vant/apple-1.jpg",
+          picture: "",
         },
         {
           id: "2",
           name: "凉拌牛肉",
-          picture: "https://img.yzcdn.cn/vant/apple-2.jpg",
+          picture: "",
         },
         {
           id: "3",
           name: "排骨炖豆角",
-          picture: "https://img.yzcdn.cn/vant/apple-3.jpg",
+          picture: "",
         },
         {
           id: "4",
           name: "番茄炖牛肉",
-          picture: "https://img.yzcdn.cn/vant/apple-4.jpg",
+          picture: "",
         },
         {
           id: "5",
           name: "番茄鸡蛋汤",
-          picture: "https://img.yzcdn.cn/vant/apple-5.jpg",
+          picture: "",
         },
         {
           id: "6",
           name: "辣白菜五花肉",
-          picture: "https://img.yzcdn.cn/vant/apple-6.jpg",
+          picture: "",
         },
         {
           id: "7",
           name: "羊肉抓饭",
-          picture: "https://img.yzcdn.cn/vant/apple-7.jpg",
+          picture: "",
         },
         {
           id: "8",
           name: "牛肉炒辣椒",
-          picture: "https://img.yzcdn",
+          picture: "",
         },
       ],
     };
@@ -120,8 +166,40 @@ export default {
   mounted() {},
   methods: {
     palceAndOrder() {
-      this.showDialog = true;
+      if (this.selected.length === 0) {
+        alert("Please select at least one item");
+        return;
+      }
+      this.showOrderDialog = true;
     },
+    addNewDish() {
+      this.showAddDialog = true;
+    },
+    saveNewDish() {
+      if (!this.menuList.find((dish) => dish.name === this.newDish.name)) {
+        this.menuList.push({
+          id: this.menuList.length + 1,
+          name: this.newDish.name,
+          picture: this.newDish.picture,
+        });
+        this.showAddDialog = false;
+        this.newDish = {
+          id: "",
+          name: "",
+          picture: "",
+        };
+      } else {
+        alert("Dish already exists");
+      }
+    },
+    onFileChange(event){
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.newDish.picture = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
   },
   computed: {},
 };
