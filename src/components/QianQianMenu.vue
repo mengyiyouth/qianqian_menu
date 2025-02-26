@@ -1,5 +1,12 @@
 <template>
-  <v-container class="d-flex justify-center align-center fill-height">
+  <v-btn @click="showDailyOrders = !showDailyOrders">{{
+    showDailyOrders ? "Show Menu" : "Show Daily Orders"
+  }}</v-btn>
+  <component :is="currentComponent"></component>
+  <v-container
+    v-if="!showDailyOrders"
+    class="d-flex justify-center align-center fill-height"
+  >
     <v-card title="Only For 77" flat class="responsive-card">
       <template v-slot:text>
         <v-row>
@@ -57,14 +64,14 @@
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn color="blue darken-1" text @click="showDialog = false"
+          <v-btn color="blue darken-1" text @click="showOrderDialog = false"
             >Close</v-btn
           >
           <v-btn
             color="surface-variant"
             text="Save"
             variant="flat"
-            @click="saveNewDish"
+            @click="generateNewOrder"
           ></v-btn>
         </v-card-actions>
       </v-card>
@@ -103,9 +110,11 @@
   </v-container>
 </template>
 <script>
+import DailyOrders from "@/components/DailyOrders.vue";
 export default {
   data() {
     return {
+      showDailyOrders: false,
       showOrderDialog: false,
       showAddDialog: false,
       selected: [],
@@ -192,16 +201,25 @@ export default {
         alert("Dish already exists");
       }
     },
-    onFileChange(event){
+    onFileChange(event) {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = (e) => {
         this.newDish.picture = e.target.result;
       };
       reader.readAsDataURL(file);
-    }
+    },
+    generateNewOrder() {
+      this.showDailyOrders = true;
+      this.$store.commit('setNewOrderData', this.selected);
+      console.log("Order generated");
+    },
   },
-  computed: {},
+  computed: {
+    currentComponent() {
+      return this.showDailyOrders ? DailyOrders : null;
+    },
+  },
 };
 </script>
 <style>
