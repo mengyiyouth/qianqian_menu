@@ -39,7 +39,7 @@
       >
         <template v-slot:[`item.picture`]="{ item }">
           {{ console.log(item) }}
-          <v-img :src="item.picture" width="100" height="100"></v-img>
+          <v-img :src="item.picture" width="100" height="70"></v-img>
         </template>
       </v-data-table>
     </v-card>
@@ -126,48 +126,58 @@ export default {
       headers: [
         { title: "Name", key: "name", align: "center" },
         { title: "Picture", key: "picture", align: "center" },
+        { title: "Calories", key: "calories", align: "center" },
+        { title: "Fat(g)", key: "fat", align: "center" },
+        { title: "Carbs(g)", key: "carbs", align: "center" },
+        { title: "Protein(g)", key: "protein", align: "center" },
+        { title: "Iron(g)", key: "iron", align: "center" },
       ],
       menuList: [
         {
-          id: "1",
+          id: "1",  
           name: "酸菜五花肉",
           picture: "",
+          calories: "105",
+          fat: "1",
+          carbs: "1",
+          protein: "1",
+          iron: "1"
         },
         {
           id: "2",
           name: "凉拌牛肉",
           picture: "",
         },
-        {
-          id: "3",
-          name: "排骨炖豆角",
-          picture: "",
-        },
-        {
-          id: "4",
-          name: "番茄炖牛肉",
-          picture: "",
-        },
-        {
-          id: "5",
-          name: "番茄鸡蛋汤",
-          picture: "",
-        },
-        {
-          id: "6",
-          name: "辣白菜五花肉",
-          picture: "",
-        },
-        {
-          id: "7",
-          name: "羊肉抓饭",
-          picture: "",
-        },
-        {
-          id: "8",
-          name: "牛肉炒辣椒",
-          picture: "",
-        },
+        // {
+        //   id: "3",
+        //   name: "排骨炖豆角",
+        //   picture: "",
+        // },
+        // {
+        //   id: "4",
+        //   name: "番茄炖牛肉",
+        //   picture: "",
+        // },
+        // {
+        //   id: "5",
+        //   name: "番茄鸡蛋汤",
+        //   picture: "",
+        // },
+        // {
+        //   id: "6",
+        //   name: "辣白菜五花肉",
+        //   picture: "",
+        // },
+        // {
+        //   id: "7",
+        //   name: "羊肉抓饭",
+        //   picture: "",
+        // },
+        // {
+        //   id: "8",
+        //   name: "牛肉炒辣椒",
+        //   picture: "",
+        // },
       ],
     };
   },
@@ -211,7 +221,7 @@ export default {
     },
     generateNewOrder() {
       this.showDailyOrders = true;
-      this.$store.commit('setNewOrderData', this.selected);
+      this.$store.commit("setNewOrderData", this.selected);
       console.log("Order generated");
     },
   },
