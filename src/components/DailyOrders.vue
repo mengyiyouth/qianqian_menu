@@ -13,7 +13,6 @@
           ></v-text-field>
         </v-col>
         <v-col cols="3">
-          <v-btn color="primary" @click="palceAndOrder">Order </v-btn>
           <v-btn color="primary" @click="addNewDish">Add</v-btn>
         </v-col>
         <v-col cols="2">
@@ -67,7 +66,7 @@ export default {
   mounted() {},
   computed: {
     newOrderData() {
-      return this.$store.state.newOrderData;
+      return this.$store.getters.getNewOrderData;
     },
   },
 };
