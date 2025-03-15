@@ -1,10 +1,16 @@
 // Styles
-import '@mdi/font/css/materialdesignicons.css'
-import 'vuetify/styles'
+import "@mdi/font/css/materialdesignicons.css";
+import "vuetify/styles";
+import { VDateInput } from "vuetify/labs/VDateInput";
 
 // Vuetify
-import { createVuetify } from 'vuetify'
+import { createVuetify } from "vuetify";
 
 export default createVuetify(
+  {
+    components: {
+      VDateInput, // Register VDateInput globally
+    },
+  }
   // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
-)
+);

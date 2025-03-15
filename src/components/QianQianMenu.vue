@@ -38,7 +38,6 @@
         class="adaptive-table"
       >
         <template v-slot:[`item.picture`]="{ item }">
-          {{ console.log(item) }}
           <v-img :src="item.picture" width="100" height="70"></v-img>
         </template>
       </v-data-table>
@@ -50,17 +49,21 @@
           <span class="headline">Order Summary</span>
         </v-card-title>
         <v-card-text>
-          <div v-if="selected.length">
-            <p>You have selected the following items:</p>
-            <ul>
-              <li v-for="item in selected" :key="item">{{ item.name }}</li>
-            </ul>
-          </div>
-          <div v-else>
-            <p>No items selected.</p>
-          </div>
+          <v-date-input></v-date-input>
+
+          <v-form>
+            <!-- <div v-if="selected.length">
+              <p>You have selected the following items:</p>
+              <ul>
+                <li v-for="item in selected" :key="item">{{ item.name }}</li>
+              </ul>
+            </div>
+            <div v-else>
+              <p>No items selected.</p>
+            </div> -->
+          </v-form>
         </v-card-text>
-        <v-date-picker></v-date-picker>
+        <!-- <v-date-picker v-model="date"></v-date-picker> -->
         <v-card-actions>
           <v-spacer></v-spacer>
 
@@ -80,22 +83,54 @@
     <v-dialog v-model="showAddDialog" max-width="500px">
       <v-card>
         <v-card-title>
-          <span class="headline">Add New Dish</span>
+          <span class="headline">添加新菜品</span>
         </v-card-title>
         <v-card-text>
           <v-form ref="form">
             <v-text-field
               v-model="newDish.name"
-              label="Dish Name"
+              label="菜品"
+              variant="outlined"
               required
             ></v-text-field>
             <v-file-input
               v-model="newDish.picture"
               label="Picture"
+              variant="outlined"
               accept="image/*"
               @change="onFileChange"
               required
             ></v-file-input>
+            <v-text-field
+              v-model="newDish.calories"
+              label="卡路里"
+              variant="outlined"
+              required
+            ></v-text-field>
+            <v-text-field
+              v-model="newDish.fat"
+              label="脂肪 (克)"
+              variant="outlined"
+              required
+            ></v-text-field>
+            <v-text-field
+              v-model="newDish.carbs"
+              label="碳 (克)"
+              variant="outlined"
+              required
+            ></v-text-field>
+            <v-text-field
+              v-model="newDish.protein"
+              label="蛋白质 (克)"
+              variant="outlined"
+              required
+            ></v-text-field>
+            <v-text-field
+              v-model="newDish.iron"
+              label="铁 (克)"
+              variant="outlined"
+              required
+            ></v-text-field>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -111,6 +146,7 @@
 </template>
 <script>
 import DailyOrders from "@/components/DailyOrders.vue";
+import { format } from "date-fns";
 export default {
   data() {
     return {
@@ -121,27 +157,33 @@ export default {
       newDish: {
         name: "",
         picture: "",
+        calories: "",
+        fat: "",
+        carbs: "",
+        protein: "",
+        iron: "",
       },
+      date: null,
       search: "",
       headers: [
-        { title: "Name", key: "name", align: "center" },
-        { title: "Picture", key: "picture", align: "center" },
-        { title: "Calories", key: "calories", align: "center" },
-        { title: "Fat(g)", key: "fat", align: "center" },
-        { title: "Carbs(g)", key: "carbs", align: "center" },
-        { title: "Protein(g)", key: "protein", align: "center" },
-        { title: "Iron(g)", key: "iron", align: "center" },
+        { title: "菜品", key: "name", align: "center" },
+        { title: "图片", key: "picture", align: "center" },
+        { title: "卡路里", key: "calories", align: "center" },
+        { title: "脂肪 (克)", key: "fat", align: "center" },
+        { title: "碳 (克)", key: "carbs", align: "center" },
+        { title: "蛋白质 (克)", key: "protein", align: "center" },
+        { title: "铁 (克)", key: "iron", align: "center" },
       ],
       menuList: [
         {
-          id: "1",  
+          id: "1",
           name: "酸菜五花肉",
           picture: "",
           calories: "105",
           fat: "1",
           carbs: "1",
           protein: "1",
-          iron: "1"
+          iron: "1",
         },
         {
           id: "2",
@@ -221,8 +263,14 @@ export default {
     },
     generateNewOrder() {
       this.showDailyOrders = true;
+      this.showOrderDialog = false;
       this.$store.commit("setNewOrderData", this.selected);
-      console.log("Order generated");
+      let dateStr = this.formateDate();
+      this.selected = [];
+      this.$store.commit("setOrderDate", dateStr);
+    },
+    formateDate() {
+      return format(new Date(this.date), "yyyy-MM-dd");
     },
   },
   computed: {
